@@ -1,0 +1,1017 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f0f7f0" />
+  <title>OakBes · Study</title>
+  <meta name="description"
+    content="OakBes — AI-платформа для учителей физики и информатики. Генерация задач, экзаменов, лабораторных и конспектов уроков." />
+
+  <!-- KaTeX -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Prism.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-cpp.min.js" defer></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+
+  <!-- QR Code -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+
+  <!-- Mermaid.js -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'loose', fontFamily: 'Inter' });
+    });
+  </script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ANIMATED GRADIENT BACKGROUND -->
+  <div id="mesh-bg" aria-hidden="true">
+    <div id="mesh-bg-extra"></div>
+    <div id="mesh-bg-inner"></div>
+  </div>
+
+  <!-- SHARED SVG SYMBOLS -->
+  <svg style="display:none">
+    <symbol id="icon-oakbes" viewBox="0 0 200 240">
+      <defs>
+        <linearGradient id="logoGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#A9D8B8" />
+          <stop offset="100%" stop-color="#1E4D3A" />
+        </linearGradient>
+      </defs>
+      <path class="logo-hexagon" d="M100 20 L160 55 L160 125 L100 160 L40 125 L40 55 Z" fill="none"
+        stroke="url(#logoGrad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+      <path class="logo-stem-lines" d="M92 162 L92 200 M108 162 L108 200" fill="none" stroke="#1E4D3A" stroke-width="4"
+        stroke-linecap="round" />
+      <path class="logo-ground-line" d="M50 200 L150 200" fill="none" stroke="#1E4D3A" stroke-width="4"
+        stroke-linecap="round" />
+      <g class="logo-brain" transform="translate(68, 55) scale(0.65)">
+        <path
+          d="M50,10 C30,10 20,25 20,40 C20,50 25,60 35,65 C30,70 28,75 28,85 C28,100 40,110 50,110 C60,110 72,100 72,85 C72,75 70,70 65,65 C75,60 80,50 80,40 C80,25 70,10 50,10 Z"
+          fill="#A9D8B8" fill-opacity="0.8" />
+        <path d="M50,25 C40,25 35,35 35,45 M50,45 C60,45 65,35 65,25 M40,65 C45,70 55,70 60,65 M50,110 L50,85"
+          fill="none" stroke="#1E4D3A" stroke-width="2" stroke-opacity="0.5" />
+      </g>
+      <text class="logo-text" x="100" y="235" font-family="'Inter', sans-serif" font-size="32" font-weight="600"
+        fill="#1E4D3A" text-anchor="middle" letter-spacing="2">OAKBES</text>
+    </symbol>
+    </symbol>
+  </svg>
+
+  <!-- REGISTRATION OVERLAY -->
+  <div id="auth-overlay" class="auth-overlay">
+    <div class="auth-card glass-card">
+      <h2 class="auth-title">Добро пожаловать в <span class="accent">OakBes</span></h2>
+      <p class="auth-subtitle">Study Edition · Твой AI-кампус по физике и IT</p>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login">Вход</button>
+        <button class="auth-tab" id="tab-register">Регистрация</button>
+      </div>
+
+      <div class="auth-social">
+        <button class="auth-social-btn" id="auth-google-btn" onclick="dismissAuth()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              fill="#4285F4" />
+            <path
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              fill="#34A853" />
+            <path
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+              fill="#FBBC05" />
+            <path
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              fill="#EA4335" />
+          </svg>
+          <span>Google</span>
+        </button>
+        <button class="auth-social-btn" id="auth-apple-btn" onclick="dismissAuth()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.42c1.27.06 2.15.62 2.88.66.95-.17 1.85-.79 2.98-.85 1.47-.08 2.82.52 3.58 1.61-3.3 2.02-2.6 6.15.46 7.64-.53 1.34-1.07 2.64-1.9 3.8zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+          </svg>
+          <span>Apple ID</span>
+        </button>
+      </div>
+
+      <div class="auth-divider"><span>или почта</span></div>
+
+      <div class="auth-form" id="auth-form">
+        <div class="input-group">
+          <i data-lucide="mail"></i>
+          <input type="email" class="auth-input" placeholder="Email адрес" id="auth-email-input" />
+        </div>
+        <div class="input-group hidden" id="password-group">
+          <i data-lucide="lock"></i>
+          <input type="password" class="auth-input" placeholder="Пароль" id="auth-password-input" />
+        </div>
+
+        <div class="auth-options">
+          <label class="remember-me">
+            <input type="checkbox" id="auth-remember">
+            <span>Запомнить</span>
+          </label>
+          <a href="#" class="forgot-pass" id="forgot-password">Забыли пароль?</a>
+        </div>
+
+        <button class="btn-primary w-full auth-submit-btn" id="auth-submit-btn" onclick="handleAuth()">
+          <span>Продолжить</span>
+        </button>
+      </div>
+
+      <p class="auth-terms">
+        Продолжая, вы принимаете <a href="#" onclick="return false">оферту</a> и <a href="#"
+          onclick="return false">политику конфиденциальности</a>
+      </p>
+      <button class="auth-skip" onclick="dismissAuth()">Продолжить без регистрации</button>
+
+      <div style="margin-top: 32px; display: flex; align-items: center; gap: 8px; opacity: 0.4;">
+        <span style="font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;">Powered
+          by</span>
+        <span class="accent" style="font-size: 11px; font-weight: 700; letter-spacing: 0.05em;">QUASAR STUDY</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo-container logo-animate">
+        <img src="Gemini_Generated_Image_ii0pdtii0pdtii0p.png" alt="OakBes"
+          style="width: 100%; height: auto; scale: 1.4;">
+      </div>
+      <span class="sidebar-title">OakBes <span class="accent">Study</span></span>
+    </div>
+    <nav class="sidebar-nav" role="tablist">
+      <button class="sidebar-btn active" data-section="physics" role="tab">
+        <i data-lucide="atom"></i><span>Физика</span>
+      </button>
+      <button class="sidebar-btn" data-section="cs" role="tab">
+        <i data-lucide="circuit-board"></i><span>Информатика</span>
+      </button>
+      <button class="sidebar-btn" data-section="generator" role="tab">
+        <i data-lucide="sparkles"></i><span>Генератор</span>
+      </button>
+      <button class="sidebar-btn" data-section="exam-engine" role="tab">
+        <i data-lucide="file-text"></i><span>Экзамен</span>
+      </button>
+      <button class="sidebar-btn" data-section="lab" role="tab">
+        <i data-lucide="flask-conical"></i><span>Лаборатория</span>
+      </button>
+      <button class="sidebar-btn" data-section="lesson" role="tab">
+        <i data-lucide="book-text"></i><span>Урок</span>
+      </button>
+      <button class="sidebar-btn" data-section="knowledge" role="tab">
+        <i data-lucide="library"></i><span>База знаний</span>
+      </button>
+      <button class="sidebar-btn" data-section="schedule" role="tab">
+        <i data-lucide="calendar-days"></i><span>План</span>
+      </button>
+      <button class="sidebar-btn" data-section="charts" role="tab">
+        <i data-lucide="bar-chart-2"></i><span>Графики</span>
+      </button>
+
+    </nav>
+    <div class="sidebar-footer">
+      <button id="api-key-btn" class="sidebar-icon-btn" title="API ключ" aria-label="API ключ">
+        <i data-lucide="key"></i>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MOBILE TOP BAR -->
+  <div id="mobile-bar" class="mobile-bar">
+    <button id="mobile-menu-btn" class="btn-icon" aria-label="Меню">
+      <i data-lucide="menu"></i>
+    </button>
+    <div class="mobile-logo-container logo-animate">
+      <img src="Gemini_Generated_Image_ii0pdtii0pdtii0p.png" alt="OakBes" style="height: 100%; width: auto;">
+    </div>
+    <div style="display:flex;gap:6px">
+      <button id="api-key-btn-mobile" class="btn-icon" title="API ключ"><i data-lucide="key"></i></button>
+    </div>
+  </div>
+
+  <!-- SIDEBAR OVERLAY (mobile) -->
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+  <!-- CHEAT SHEET MODAL -->
+  <div id="cheatsheet-modal" class="modal-overlay hidden">
+    <div class="modal glass-card cheatsheet-modal-inner">
+      <div class="cheatsheet-header">
+        <div>
+          <h3 class="modal-title" id="cheatsheet-title">Шпаргалка</h3>
+          <p class="modal-desc" id="cheatsheet-subtitle">Ключевые формулы</p>
+        </div>
+        <button id="cheatsheet-close" class="btn-icon"><i data-lucide="x"></i></button>
+      </div>
+      <div id="cheatsheet-content" class="cheatsheet-content">
+        <div class="output-empty">
+          <div class="typing-dots"><span></span><span></span><span></span></div>
+          <p style="margin-top:14px;font-size:13px">Генерирую шпаргалку…</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR CODE MODAL -->
+  <div id="qr-modal" class="modal-overlay hidden">
+    <div class="modal glass-card qr-modal-inner">
+      <div class="cheatsheet-header">
+        <div>
+          <h3 class="modal-title">QR-код задачи</h3>
+          <p class="modal-desc">Сканируйте для подсказки</p>
+        </div>
+        <button id="qr-modal-close" class="btn-icon"><i data-lucide="x"></i></button>
+      </div>
+      <div class="qr-modal-body">
+        <div id="qr-canvas"></div>
+        <p class="qr-task-label" id="qr-task-label"></p>
+      </div>
+      <div class="qr-modal-tabs">
+        <button class="qr-tab active" data-qr-type="hint">Подсказка</button>
+        <button class="qr-tab" data-qr-type="condition">Условие</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHANGE VALUES MODAL -->
+  <div id="varchange-modal" class="modal-overlay hidden">
+    <div class="modal glass-card varchange-modal-inner">
+      <div class="cheatsheet-header">
+        <div>
+          <h3 class="modal-title">Изменить значения</h3>
+          <p class="modal-desc">Задача пересчитается с новыми данными</p>
+        </div>
+        <button id="varchange-close" class="btn-icon"><i data-lucide="x"></i></button>
+      </div>
+      <div class="varchange-body">
+        <p class="field-label" style="margin-bottom:12px">Укажите новые значения переменных:</p>
+        <textarea id="varchange-input" class="qs-input" rows="3"
+          placeholder="Например: вместо 10 м/с используй 5 м/с, масса 2 кг вместо 3 кг"></textarea>
+        <button class="btn-primary w-full" id="varchange-btn" style="margin-top:14px">
+          <i data-lucide="refresh-cw"></i><span>Пересчитать задачу</span>
+        </button>
+        <div id="varchange-result" class="varchange-result hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXAM COMPILER MODAL -->
+  <div id="exam-modal" class="modal-overlay hidden">
+    <div class="modal glass-card exam-modal-inner">
+      <div class="cheatsheet-header">
+        <div>
+          <h3 class="modal-title">Компилятор экзамена</h3>
+          <p class="modal-desc">Перемешать и экспортировать рабочий лист</p>
+        </div>
+        <button id="exam-modal-close" class="btn-icon"><i data-lucide="x"></i></button>
+      </div>
+      <div class="exam-modal-body">
+        <div class="exam-options">
+          <label class="exam-option">
+            <input type="checkbox" id="exam-shuffle" checked />
+            <span>Перемешать порядок задач</span>
+          </label>
+          <label class="exam-option">
+            <input type="checkbox" id="exam-rubric" checked />
+            <span>Включить рубрику оценивания</span>
+          </label>
+        </div>
+        <div class="exam-actions">
+          <button class="btn-primary" id="exam-teacher-btn">
+            <i data-lucide="user-check"></i><span>Версия учителя (с ответами)</span>
+          </button>
+          <button class="btn-outline" id="exam-student-btn">
+            <i data-lucide="user"></i><span>Версия ученика (без ответов)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GLASS ERROR NOTIFICATION -->
+  <div id="glass-error" class="glass-error hidden">
+    <div class="glass-error-inner">
+      <i data-lucide="alert-triangle" class="glass-error-icon"></i>
+      <span id="glass-error-msg"></span>
+      <button id="glass-error-retry" class="btn-outline btn-sm">Повторить</button>
+      <button id="glass-error-close" class="btn-icon btn-sm"><i data-lucide="x"></i></button>
+    </div>
+  </div>
+
+  <!-- WORKSHEET SIDEBAR -->
+  <div id="worksheet-sidebar" class="worksheet-sidebar hidden">
+    <div class="ws-header">
+      <div>
+        <div class="ws-title"><i data-lucide="clipboard-list"></i> Рабочий лист</div>
+        <div class="ws-count" id="ws-count">0 задач</div>
+      </div>
+      <button id="ws-close" class="btn-icon"><i data-lucide="x"></i></button>
+    </div>
+    <div id="ws-tasks" class="ws-tasks">
+      <div class="ws-empty">
+        <i data-lucide="plus-circle"></i>
+        <p>Нажмите «+ В лист» под задачей,<br>чтобы добавить её сюда</p>
+      </div>
+    </div>
+    <div class="ws-footer">
+      <button class="btn-outline ws-btn-sm" id="ws-clear-btn"><i data-lucide="trash-2"></i></button>
+      <button class="btn-outline ws-btn-sm" id="ws-exam-btn" title="Компилятор экзамена"><i
+          data-lucide="layers"></i></button>
+      <button class="btn-primary ws-btn-grow" id="ws-print-btn"><i
+          data-lucide="printer"></i><span>Печать</span></button>
+    </div>
+  </div>
+
+  <!-- WORKSHEET TOGGLE -->
+  <button id="ws-toggle-btn" class="ws-toggle-btn hidden" title="Рабочий лист">
+    <i data-lucide="clipboard-list"></i>
+    <span id="ws-badge" class="ws-badge">0</span>
+  </button>
+
+  <!-- QR HINT OVERLAY -->
+  <div id="qr-hint-overlay" class="qr-hint-overlay hidden">
+    <div class="qr-hint-inner glass-card">
+      <div class="cheatsheet-header">
+        <div>
+          <h3 class="modal-title" id="qr-hint-task-label">Подсказка</h3>
+        </div>
+        <button class="btn-icon" id="qr-hint-close"><i data-lucide="x"></i></button>
+      </div>
+      <div id="qr-hint-body" class="cheatsheet-content"></div>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <main id="app">
+
+    <!-- PHYSICS CHAT -->
+    <section id="section-physics" class="content-section active">
+      <div class="section-header" data-reveal>
+        <h2>Физика</h2>
+        <p>AI-ассистент экспертного уровня — формулы, задачи, теория</p>
+      </div>
+      <div class="chat-layout">
+        <div class="mode-toggle glass-card">
+          <button class="mode-btn active" data-mode="simple"><i data-lucide="message-circle"></i><span>Прямой
+              ответ</span></button>
+          <button class="mode-btn" data-mode="socratic"><i data-lucide="graduation-cap"></i><span>Сократический
+              метод</span></button>
+        </div>
+        <div class="chat-window glass-card" id="chat-physics">
+          <div class="chat-messages" id="messages-physics">
+            <div class="chat-welcome">
+              <i data-lucide="atom" class="welcome-icon"></i>
+              <p>Задайте вопрос по физике — формулы, задачи, теория.</p>
+            </div>
+          </div>
+          <div id="chips-physics" class="chat-chips"></div>
+          <div class="chat-input-bar">
+            <textarea id="input-physics" class="chat-textarea" placeholder="Напишите вопрос по физике..."
+              rows="1"></textarea>
+            <button class="send-btn" id="send-physics"><i data-lucide="send"></i></button>
+          </div>
+        </div>
+        <div class="chat-actions">
+          <button class="btn-outline" id="new-chat-physics"><i data-lucide="plus-circle"></i><span>Новый
+              чат</span></button>
+          <button class="btn-accent-outline" id="quiz-physics" title="Быстрый квиз по теме"><i
+              data-lucide="help-circle"></i><span>Квиз</span></button>
+          <button class="btn-outline" id="print-physics"><i data-lucide="printer"></i><span>Печать / PDF</span></button>
+          <button class="btn-outline" id="clear-physics"><i data-lucide="trash-2"></i><span>Очистить</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CS CHAT -->
+    <section id="section-cs" class="content-section">
+      <div class="section-header">
+        <h2>Информатика</h2>
+        <p>Алгоритмы, программирование, структуры данных, ИИ</p>
+      </div>
+      <div class="chat-layout">
+        <div class="mode-toggle glass-card">
+          <button class="mode-btn active" data-mode="simple"><i data-lucide="message-circle"></i><span>Прямой
+              ответ</span></button>
+          <button class="mode-btn" data-mode="socratic"><i data-lucide="graduation-cap"></i><span>Сократический
+              метод</span></button>
+          <button class="mode-btn" data-mode="trace"><i data-lucide="cpu"></i><span>Трассировка</span></button>
+        </div>
+        <div class="chat-window glass-card" id="chat-cs">
+          <div class="chat-messages" id="messages-cs">
+            <div class="chat-welcome">
+              <i data-lucide="circuit-board" class="welcome-icon"></i>
+              <p>Задайте вопрос по информатике — алгоритмы, код, теория.</p>
+            </div>
+          </div>
+          <div id="chips-cs" class="chat-chips"></div>
+          <div class="chat-input-bar">
+            <textarea id="input-cs" class="chat-textarea" placeholder="Напишите вопрос по информатике..."
+              rows="1"></textarea>
+            <button class="send-btn" id="send-cs"><i data-lucide="send"></i></button>
+          </div>
+        </div>
+        <div class="chat-actions">
+          <button class="btn-outline" id="new-chat-cs"><i data-lucide="plus-circle"></i><span>Новый чат</span></button>
+          <button class="btn-accent-outline" id="quiz-cs" title="Быстрый квиз по коду"><i
+              data-lucide="help-circle"></i><span>Квиз</span></button>
+          <button class="btn-outline" id="print-cs"><i data-lucide="printer"></i><span>Печать / PDF</span></button>
+          <button class="btn-outline" id="clear-cs"><i data-lucide="trash-2"></i><span>Очистить</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- GENERATOR -->
+    <section id="section-generator" class="content-section">
+      <div class="section-header" data-reveal>
+        <h2>Генератор задач</h2>
+        <p>Задания с рубриками, QR-кодами и изменением переменных</p>
+      </div>
+      <div class="generator-layout">
+        <div class="gen-settings glass-card">
+          <div class="gen-field">
+            <label class="field-label">Предмет</label>
+            <div class="segmented" id="gen-subject">
+              <button class="seg-btn active" data-val="physics">Физика</button>
+              <button class="seg-btn" data-val="cs">Информатика</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Класс</label>
+            <div class="segmented" id="gen-grade">
+              <button class="seg-btn active" data-val="7">7</button>
+              <button class="seg-btn" data-val="8">8</button>
+              <button class="seg-btn" data-val="9">9</button>
+              <button class="seg-btn" data-val="10">10</button>
+              <button class="seg-btn" data-val="11">11</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Сложность</label>
+            <div class="segmented" id="gen-difficulty">
+              <button class="seg-btn active" data-val="easy">Базовый</button>
+              <button class="seg-btn" data-val="medium">Средний</button>
+              <button class="seg-btn" data-val="olympiad">Олимпиада</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Тема</label>
+            <select id="gen-topic" class="qs-select"></select>
+            <input id="gen-topic-custom" class="qs-input" placeholder="Или введите свою тему" />
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Количество задач</label>
+            <div class="range-row">
+              <input type="range" id="gen-count" min="1" max="10" value="3" class="qs-range" />
+              <span id="gen-count-val" class="range-val">3</span>
+            </div>
+          </div>
+          <div class="gen-buttons-row">
+            <button class="btn-primary" style="flex:1" id="gen-btn">
+              <i data-lucide="sparkles"></i><span>Сгенерировать</span>
+            </button>
+            <button class="btn-accent-outline" id="flash-task-btn" title="Flash-задача: 1 вопрос">
+              <i data-lucide="zap"></i>
+            </button>
+            <button class="btn-outline" id="cheatsheet-btn" title="Шпаргалка по теме">
+              <i data-lucide="scroll-text"></i>
+            </button>
+          </div>
+        </div>
+        <div class="gen-output glass-card">
+          <div class="gen-output-header">
+            <span class="output-label">Результат</span>
+            <div style="display:flex;gap:8px">
+              <button class="btn-icon" id="ws-open-btn" title="Рабочий лист"><i
+                  data-lucide="clipboard-list"></i></button>
+              <button class="btn-icon" id="print-gen" title="Печать"><i data-lucide="printer"></i></button>
+            </div>
+          </div>
+          <div id="gen-result" class="gen-result-area">
+            <div class="output-empty">
+              <i data-lucide="file-search"></i>
+              <p>Задачи появятся здесь</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXAM ENGINE -->
+    <section id="section-exam-engine" class="content-section">
+      <div class="section-header" data-reveal>
+        <h2>Экзаменатор</h2>
+        <p>Варианты A/B · ETA · Авто-рубрика · Split-Print</p>
+      </div>
+      <div class="exam-engine-layout">
+        <div class="exam-engine-settings glass-card">
+          <div class="gen-field">
+            <label class="field-label">Предмет</label>
+            <div class="segmented" id="ee-subject">
+              <button class="seg-btn active" data-val="physics">Физика</button>
+              <button class="seg-btn" data-val="cs">Информатика</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Класс</label>
+            <div class="segmented" id="ee-grade">
+              <button class="seg-btn" data-val="7">7</button>
+              <button class="seg-btn" data-val="8">8</button>
+              <button class="seg-btn active" data-val="9">9</button>
+              <button class="seg-btn" data-val="10">10</button>
+              <button class="seg-btn" data-val="11">11</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Тема</label>
+            <select id="ee-topic" class="qs-select"></select>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Сложность</label>
+            <div class="segmented" id="ee-difficulty">
+              <button class="seg-btn active" data-val="easy">Базовый</button>
+              <button class="seg-btn" data-val="medium">Средний</button>
+              <button class="seg-btn" data-val="olympiad">Олимпиада</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Задач в варианте</label>
+            <div class="range-row">
+              <input type="range" id="ee-count" min="3" max="10" value="5" class="qs-range" />
+              <span id="ee-count-val" class="range-val">5</span>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Режим вариантов</label>
+            <div class="segmented" id="ee-variant-toggle">
+              <button class="seg-btn active" data-val="both">A + B</button>
+              <button class="seg-btn" data-val="A">Только A</button>
+              <button class="seg-btn" data-val="B">Только B</button>
+            </div>
+          </div>
+          <button class="btn-primary w-full" id="ee-gen-btn">
+            <i data-lucide="layers"></i><span>Сгенерировать экзамен</span>
+          </button>
+        </div>
+        <div class="exam-engine-output glass-card">
+          <div class="gen-output-header">
+            <div style="display:flex;gap:10px;align-items:center">
+              <span class="output-label">Экзамен</span>
+              <div class="ee-variant-tabs hidden" id="ee-variant-tabs">
+                <button class="ee-tab active" data-variant="A">Вариант A</button>
+                <button class="ee-tab" data-variant="B">Вариант B</button>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div class="ee-eta hidden" id="ee-eta">
+                <i data-lucide="clock"></i>
+                <span id="ee-eta-value">ETA: —</span>
+              </div>
+              <button class="btn-icon" id="ee-print-teacher" title="Версия учителя"><i
+                  data-lucide="user-check"></i></button>
+              <button class="btn-icon" id="ee-print-student" title="Версия ученика"><i data-lucide="user"></i></button>
+            </div>
+          </div>
+          <div id="ee-result" class="gen-result-area">
+            <div class="output-empty">
+              <i data-lucide="file-text"></i>
+              <p>Варианты A и B появятся здесь</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LAB -->
+    <section id="section-lab" class="content-section">
+      <div class="section-header">
+        <h2>Лабораторная работа</h2>
+        <p>Полная лабораторная: цель, оборудование, процедура, таблицы данных</p>
+      </div>
+      <div class="lab-layout">
+        <div class="lab-form glass-card">
+          <div class="gen-field">
+            <label class="field-label">Предмет</label>
+            <div class="segmented" id="lab-subject">
+              <button class="seg-btn active" data-val="physics">Физика</button>
+              <button class="seg-btn" data-val="cs">Информатика</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Класс</label>
+            <div class="segmented" id="lab-grade">
+              <button class="seg-btn" data-val="7">7</button>
+              <button class="seg-btn active" data-val="8">8</button>
+              <button class="seg-btn" data-val="9">9</button>
+              <button class="seg-btn" data-val="10">10</button>
+              <button class="seg-btn" data-val="11">11</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Тема</label>
+            <select id="lab-topic" class="qs-select"></select>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Тип лабораторной</label>
+            <div class="lab-type-grid" id="lab-type-grid">
+              <button class="lab-type-card active" data-val="measurement"><i
+                  data-lucide="ruler"></i><span>Измерение</span></button>
+              <button class="lab-type-card" data-val="investigation"><i
+                  data-lucide="search"></i><span>Исследование</span></button>
+              <button class="lab-type-card" data-val="verification"><i data-lucide="check-circle-2"></i><span>Проверка
+                  закона</span></button>
+              <button class="lab-type-card" data-val="simulation"><i
+                  data-lucide="monitor-play"></i><span>Симуляция</span></button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Дополнительные требования</label>
+            <textarea id="lab-requirements" class="qs-input" rows="2"
+              placeholder="Например: использовать динамометр…"></textarea>
+          </div>
+          <button class="btn-primary w-full" id="lab-gen-btn">
+            <i data-lucide="flask-conical"></i><span>Сгенерировать лабораторную</span>
+          </button>
+        </div>
+        <div class="lab-output glass-card" id="lab-output-card">
+          <div class="gen-output-header">
+            <span class="output-label">Лабораторная работа</span>
+            <div style="display:flex;gap:8px">
+              <button class="btn-icon" id="lab-print-teacher" title="Версия учителя"><i
+                  data-lucide="user-check"></i></button>
+              <button class="btn-icon" id="lab-print-student" title="Версия ученика"><i data-lucide="user"></i></button>
+            </div>
+          </div>
+          <div id="lab-result" class="gen-result-area">
+            <div class="output-empty">
+              <i data-lucide="flask-conical"></i>
+              <p>Лабораторная работа появится здесь</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LESSON PLANNER -->
+    <section id="section-lesson" class="content-section">
+      <div class="section-header">
+        <h2>Планировщик уроков</h2>
+        <p>Уроки и дни · Назначение тем по дням недели · Поминутный сценарий</p>
+      </div>
+      <div class="lesson-layout">
+        <div class="lesson-form glass-card">
+          <div class="gen-field">
+            <label class="field-label">Предмет</label>
+            <div class="segmented" id="lesson-subject">
+              <button class="seg-btn active" data-val="physics">Физика</button>
+              <button class="seg-btn" data-val="cs">Информатика</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Класс</label>
+            <div class="segmented" id="lesson-grade">
+              <button class="seg-btn active" data-val="7">7</button>
+              <button class="seg-btn" data-val="8">8</button>
+              <button class="seg-btn" data-val="9">9</button>
+              <button class="seg-btn" data-val="10">10</button>
+              <button class="seg-btn" data-val="11">11</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Тема урока</label>
+            <select id="lesson-topic" class="qs-select"></select>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Дни уроков</label>
+            <div class="day-picker" id="lesson-days">
+              <button class="day-btn" data-day="Пн">Пн</button>
+              <button class="day-btn active" data-day="Вт">Вт</button>
+              <button class="day-btn" data-day="Ср">Ср</button>
+              <button class="day-btn active" data-day="Чт">Чт</button>
+              <button class="day-btn" data-day="Пт">Пт</button>
+              <button class="day-btn" data-day="Сб">Сб</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Уроков в неделю</label>
+            <div class="range-row">
+              <input type="range" id="lesson-count" min="1" max="6" value="2" class="qs-range" />
+              <span id="lesson-count-val" class="range-val">2</span>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Тип урока</label>
+            <div class="lesson-type-grid" id="lesson-type-grid">
+              <button class="lesson-type-card active" data-val="new"><i
+                  data-lucide="sparkles"></i><span>Новый</span></button>
+              <button class="lesson-type-card" data-val="practice"><i
+                  data-lucide="pencil-ruler"></i><span>Практика</span></button>
+              <button class="lesson-type-card" data-val="revision"><i
+                  data-lucide="rotate-ccw"></i><span>Повторение</span></button>
+              <button class="lesson-type-card" data-val="test"><i
+                  data-lucide="clipboard-check"></i><span>Контроль</span></button>
+            </div>
+          </div>
+          <button class="btn-primary w-full" id="lesson-gen-btn">
+            <i data-lucide="book-text"></i><span>Сгенерировать конспект</span>
+          </button>
+        </div>
+        <div class="lesson-output glass-card" id="lesson-output-card">
+          <div class="gen-output-header">
+            <span class="output-label">Конспект урока</span>
+            <div style="display:flex;gap:8px">
+              <button class="btn-icon" id="lesson-print-teacher" title="Версия учителя"><i
+                  data-lucide="user-check"></i></button>
+              <button class="btn-icon" id="lesson-print-student" title="Версия ученика"><i
+                  data-lucide="user"></i></button>
+            </div>
+          </div>
+          <div id="lesson-result" class="gen-result-area">
+            <div class="output-empty">
+              <i data-lucide="book-text"></i>
+              <p>Конспект появится здесь</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KNOWLEDGE BASE -->
+    <section id="section-knowledge" class="content-section">
+      <div class="section-header">
+        <h2>База знаний</h2>
+        <p>Термины, формулы и теоремы с помощью AI-объяснений</p>
+      </div>
+      <div class="generator-layout">
+        <div class="gen-settings glass-card">
+          <div class="gen-field">
+            <label class="field-label">Категория</label>
+            <div class="segmented" id="kb-type">
+              <button class="seg-btn active" data-val="term">Термин</button>
+              <button class="seg-btn" data-val="formula">Формула</button>
+              <button class="seg-btn" data-val="theorem">Теорема</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Предмет</label>
+            <div class="segmented" id="kb-subject">
+              <button class="seg-btn active" data-val="physics">Физика</button>
+              <button class="seg-btn" data-val="cs">Информатика</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Запрос</label>
+            <input id="kb-query" class="qs-input" placeholder="Например: закон Ома, DFS, теорема Пифагора" />
+          </div>
+          <button class="btn-primary w-full" id="kb-explain-btn">
+            <i data-lucide="zap"></i><span>Найти объяснение</span>
+          </button>
+          <div class="gen-field" style="margin-top: 8px;">
+            <label class="field-label">Быстрый доступ</label>
+            <div class="day-picker" id="kb-quick-list">
+              <button class="day-btn kb-quick" data-q="закон Ома">Закон Ома</button>
+              <button class="day-btn kb-quick" data-q="второй закон Ньютона">2-й закон Ньютона</button>
+              <button class="day-btn kb-quick" data-q="теорема Пифагора">Пифагор</button>
+              <button class="day-btn kb-quick" data-q="сложность O(n log n)">O(n log n)</button>
+              <button class="day-btn kb-quick" data-q="алгоритм Дейкстры">Дейкстра</button>
+            </div>
+          </div>
+        </div>
+        <div class="gen-output glass-card">
+          <div class="gen-output-header">
+            <span class="output-label">Объяснение</span>
+            <button class="btn-icon" id="kb-print" title="Печать"><i data-lucide="printer"></i></button>
+          </div>
+          <div id="kb-result" class="gen-result-area">
+            <div class="output-empty">
+              <i data-lucide="library"></i>
+              <p>Выберите запрос, термин или формулу</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCHEDULE -->
+    <section id="section-schedule" class="content-section">
+      <div class="section-header">
+        <h2>Учебный план</h2>
+        <p>Персональное расписание на основе ваших целей</p>
+      </div>
+      <div class="schedule-layout">
+        <div class="sched-form glass-card">
+          <div class="gen-field">
+            <label class="field-label">Предмет</label>
+            <div class="segmented" id="sched-subject">
+              <button class="seg-btn active" data-val="physics">Физика</button>
+              <button class="seg-btn" data-val="cs">Информатика</button>
+              <button class="seg-btn" data-val="both">Оба</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Класс</label>
+            <div class="segmented" id="sched-grade">
+              <button class="seg-btn active" data-val="7">7</button>
+              <button class="seg-btn" data-val="8">8</button>
+              <button class="seg-btn" data-val="9">9</button>
+              <button class="seg-btn" data-val="10">10</button>
+              <button class="seg-btn" data-val="11">11</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Часов в неделю</label>
+            <div class="range-row">
+              <input type="range" id="sched-hours" min="1" max="20" value="6" class="qs-range" />
+              <span id="sched-hours-val" class="range-val">6 ч</span>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Цель</label>
+            <select id="sched-goal" class="qs-select">
+              <option value="exam">Подготовка к экзамену (ОГЭ/ЕГЭ)</option>
+              <option value="olympiad">Олимпиада</option>
+              <option value="deep">Глубокое погружение</option>
+              <option value="program">Прохождение программы</option>
+              <option value="catch-up">Восполнение пробелов</option>
+            </select>
+          </div>
+          <div class="sched-extra glass-card" style="margin-top: 24px; padding: 16px;">
+            <h4 style="font-size: 14px; margin-bottom: 12px; display:flex; align-items:center; gap:8px">
+              <i data-lucide="zap" class="accent"></i> Карточки (Active Recall)
+            </h4>
+            <div id="flashcards-list" class="flashcards-list">
+              <div class="output-empty" style="padding: 10px;">
+                <p style="font-size: 12px;">Здесь появятся ваши карточки из чата</p>
+              </div>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Недель на подготовку</label>
+            <div class="range-row">
+              <input type="range" id="sched-weeks" min="2" max="52" value="16" class="qs-range" />
+              <span id="sched-weeks-val" class="range-val">16 нед</span>
+            </div>
+          </div>
+          <button class="btn-primary w-full" id="sched-btn">
+            <i data-lucide="calendar-days"></i><span>Составить план</span>
+          </button>
+        </div>
+        <div class="sched-output glass-card">
+          <div class="gen-output-header">
+            <span class="output-label">Учебный план</span>
+            <button class="btn-icon" id="print-sched" title="Печать"><i data-lucide="printer"></i></button>
+          </div>
+          <div id="sched-result" class="gen-result-area">
+            <div class="output-empty">
+              <i data-lucide="calendar-days"></i>
+              <p>Расписание появится здесь</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHARTS & TABLES -->
+    <section id="section-charts" class="content-section">
+      <div class="section-header">
+        <h2>Графики и таблицы</h2>
+        <p>Генерация графиков функций, данных, диаграмм и таблиц</p>
+      </div>
+      <div class="generator-layout">
+        <div class="gen-settings glass-card">
+          <div class="gen-field">
+            <label class="field-label">Тип визуализации</label>
+            <div class="segmented" id="chart-type-seg">
+              <button class="seg-btn active" data-val="line">График</button>
+              <button class="seg-btn" data-val="bar">Столбцы</button>
+              <button class="seg-btn" data-val="scatter">Точки</button>
+              <button class="seg-btn" data-val="table">Таблица</button>
+            </div>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Описание</label>
+            <textarea id="chart-prompt" class="qs-input" rows="4"
+              placeholder="Например: график скорости тела при равноускоренном движении v₀=2 м/с, a=3 м/с², t от 0 до 5 с"></textarea>
+          </div>
+          <div class="gen-field">
+            <label class="field-label">Быстрые шаблоны</label>
+            <div class="day-picker">
+              <button class="day-btn chart-quick"
+                data-q="График v(t) при равноускоренном движении, v0=0, a=9.8, t от 0 до 10">v(t) свободное
+                падение</button>
+              <button class="day-btn chart-quick"
+                data-q="Таблица значений sin(x) и cos(x) для x = 0°, 30°, 45°, 60°, 90°">sin/cos таблица</button>
+              <button class="day-btn chart-quick"
+                data-q="График зависимости пути от времени s=v*t при v=5 м/с, t от 0 до 10">s(t) равномерное</button>
+              <button class="day-btn chart-quick"
+                data-q="Таблица сравнения сортировок: пузырьковая, вставками, быстрая — лучший/средний/худший случай O-нотация">Сложность
+                сортировок</button>
+              <button class="day-btn chart-quick"
+                data-q="График КПД теплового двигателя в зависимости от температуры нагревателя T1 от 400 до 1000 K, T2=300 K">КПД
+                vs T</button>
+            </div>
+          </div>
+          <button class="btn-primary w-full" id="chart-gen-btn">
+            <i data-lucide="bar-chart-2"></i><span>Сгенерировать</span>
+          </button>
+        </div>
+        <div class="gen-output glass-card" id="chart-output-card">
+          <div class="gen-output-header">
+            <span class="output-label">Визуализация</span>
+            <div style="display:flex;gap:8px">
+              <button class="btn-icon" id="chart-replay-btn" title="Воспроизвести анимацию"><i
+                  data-lucide="play"></i></button>
+              <button class="btn-icon" id="chart-download-btn" title="Скачать PNG"><i
+                  data-lucide="download"></i></button>
+              <button class="btn-icon" id="chart-print-btn" title="Печать"><i data-lucide="printer"></i></button>
+            </div>
+          </div>
+          <div id="chart-result" class="gen-result-area">
+            <div class="output-empty">
+              <i data-lucide="bar-chart-2"></i>
+              <p>График появится здесь</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+  </main>
+
+
+  <div id="print-area" class="hidden"></div>
+  <div id="orientation-tip" class="orientation-tip hidden" role="status" aria-live="polite">
+    Для удобства на iPhone поверните экран в альбомную ориентацию перед печатью.
+  </div>
+
+  <script>
+    function dismissAuth() {
+      const overlay = document.getElementById('auth-overlay');
+      if (overlay) {
+        overlay.classList.add('auth-dismissed');
+        setTimeout(() => overlay.remove(), 400);
+      }
+    }
+
+    // Mobile sidebar toggle
+    document.addEventListener('DOMContentLoaded', () => {
+      const menuBtn = document.getElementById('mobile-menu-btn');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+
+      if (menuBtn) {
+        menuBtn.addEventListener('click', () => {
+          sidebar.classList.toggle('open');
+          overlay.classList.toggle('open');
+        });
+      }
+      if (overlay) {
+        overlay.addEventListener('click', () => {
+          sidebar.classList.remove('open');
+          overlay.classList.remove('open');
+        });
+      }
+
+      // Close sidebar on nav click (mobile)
+      document.querySelectorAll('.sidebar-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (window.innerWidth <= 900) {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+          }
+        });
+      });
+    });
+  </script>
+  <script src="app.js"></script>
+
+</body>
+
+</html>
